@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<!-- memcachedPool -->
+	<bean id="memcachedPool" class="com.whalin.MemCached.SockIOPool" 
+		factory-method="getInstance" 
+		init-method="initialize" destroy-method="shutDown">
+		<constructor-arg>
+			<value>memcachedPool</value>
+		</constructor-arg>
+		<property name="servers">
+			<list>
+				<value>${memcache.server}</value>
+			</list>
+		</property>
+		<property name="initConn">
+			<value>${memcache.initConn}</value>
+		</property>
+		<property name="minConn">
+			<value>${memcache.minConn}</value>
+		</property>
+		<property name="maxConn">
+			<value>${memcache.maxConn}</value>
+		</property>
+		<property name="maintSleep">
+			<value>${memcache.maintSleep}</value>
+		</property>
+		<property name="nagle">
+			<value>${memcache.nagle}</value>
+		</property>
+		<property name="socketTO">
+			<value>${memcache.socketTO}</value>
+		</property>
+	</bean>
+    
+    <!-- 客户端  -->
+	<bean id="memCachedClient" class="com.whalin.MemCached.MemCachedClient">
+		<constructor-arg>
+			<value>memcachedPool</value>
+		</constructor-arg>
+	</bean>
+    
+    <bean id="userService" class="com.ibs.zj.mem.service.impl.UserServiceImpl">
+    	<property name="cacheProvider" ref="memCachedClient"></property>
+    </bean>
+    
+</beans>
